@@ -12,7 +12,9 @@
     <Reference Include="Assembly-CSharp" HintPath="$(Managed)\Assembly-CSharp.dll" Private="false" />
     <Reference Include="Comfort" HintPath="$(Managed)\Comfort.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(Managed)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.IMGUIModule" HintPath="$(Managed)\UnityEngine.IMGUIModule.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(Managed)\UnityEngine.dll" Private="false" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(Managed)\Newtonsoft.Json.dll" Private="false" />
     <Reference Include="ItemComponent.Types" HintPath="$(Managed)\ItemComponent.Types.dll" Private="false" />
     <Reference Include="ItemTemplate.Types" HintPath="$(Managed)\ItemTemplate.Types.dll" Private="false" />
     <Reference Include="Sirenix.Serialization" HintPath="$(Managed)\Sirenix.Serialization.dll" Private="false" />
@@ -20,5 +22,6 @@
     <Reference Include="BepInEx" HintPath="$(BepInEx)\core\BepInEx.dll" Private="false" />
     <Reference Include="spt-reflection" HintPath="$(BepInEx)\plugins\spt\spt-reflection.dll" Private="false" />
     <Compile Include="..\Shared\ItemIds.cs" Link="ItemIds.cs" />
+    <Compile Include="..\Shared\ModConfig.cs" Link="ModConfig.cs" />
   </ItemGroup>
 </Project>

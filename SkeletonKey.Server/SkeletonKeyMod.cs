@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using SPTarkov.DI.Annotations;
@@ -41,22 +42,22 @@ public sealed record ModMetadata : IModMetadata
 }
 
 [Injectable(TypePriority = OnLoadOrder.HandbookCallbacks - 1)]
-public sealed class SkeletonKeyMod(CustomItemService items, LocationTable locations) : IOnLoad
+public sealed class SkeletonKeyMod(CustomItemService items, LocationTable locations, BossLoot bossLoot) : IOnLoad
 {
     private const string MasterCardBundle =
         "assets/content/items/spec/item_keycard_lab/item_keycard_quest_master_lab.bundle";
+    private static readonly JsonSerializerOptions ConfigJson = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    };
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         var assembly = typeof(SkeletonKeyMod).Assembly;
         var path = Path.Combine(Path.GetDirectoryName(assembly.Location)!, "config.json");
-        var config = JsonSerializer.Deserialize<ModConfig>(File.ReadAllText(path))
-            ?? throw new InvalidDataException("Skeleton Key config.json is empty.");
-        if (config.KeyUses < 0 || config.KeycardUses < 0 || config.KeyPrice <= 0 || config.KeycardPrice <= 0 ||
-            config.Containers is null || config.Containers.Any(entry => !float.IsFinite(entry.Value) || entry.Value < 0))
-        {
-            throw new InvalidDataException("Skeleton Key config.json has an invalid price, use count, or loot weight.");
-        }
+        var config = LoadConfig(path);
+        var spawnWeights = config.GetValidatedSpawnWeights();
 
         RegisterItem(ItemIds.Key, "5780cf7f2459777de4559322", "5c99f98d86f7745c314214b3",
             "5c518ec986f7743b68682ce2", "skeleton_key", "yellow",
@@ -79,23 +80,18 @@ public sealed class SkeletonKeyMod(CustomItemService items, LocationTable locati
 
             staticLoot.AddTransformer(containers =>
             {
-                foreach (var (id, weight) in config.Containers)
+                foreach (var (id, weights) in spawnWeights)
                 {
                     MongoId containerId = id;
-                    if (weight == 0 || containers is null || !containers.TryGetValue(containerId, out var loot) || loot is null)
+                    if ((weights.Key == 0 && weights.Keycard == 0) || containers is null ||
+                        !containers.TryGetValue(containerId, out var loot) || loot is null)
                     {
                         continue;
                     }
 
                     var distribution = loot.ItemDistribution?.ToList() ?? [];
-                    foreach (MongoId item in new MongoId[] { ItemIds.Key, ItemIds.Keycard })
-                    {
-                        if (!distribution.Any(entry => entry.Tpl == item))
-                        {
-                            distribution.Add(new ItemDistribution { Tpl = item, RelativeProbability = weight });
-                        }
-                    }
-
+                    AddLoot(distribution, ItemIds.Key, weights.Key);
+                    AddLoot(distribution, ItemIds.Keycard, weights.Keycard);
                     containers[containerId] = loot with { ItemDistribution = distribution };
                 }
 
@@ -103,7 +99,41 @@ public sealed class SkeletonKeyMod(CustomItemService items, LocationTable locati
             });
         }
 
+        bossLoot.Install(config);
         return Task.CompletedTask;
+    }
+
+    private static void AddLoot(List<ItemDistribution> distribution, MongoId item, float weight)
+    {
+        if (weight > 0 && !distribution.Any(entry => entry.Tpl == item))
+        {
+            distribution.Add(new ItemDistribution { Tpl = item, RelativeProbability = weight });
+        }
+    }
+
+    private static ModConfig LoadConfig(string path)
+    {
+        if (!File.Exists(path))
+        {
+            var tempPath = $"{path}.{Guid.NewGuid():N}.tmp";
+            try
+            {
+                var defaults = JsonSerializer.Serialize(ModConfig.CreateDefault(), ConfigJson);
+                File.WriteAllText(tempPath, defaults + Environment.NewLine);
+                File.Move(tempPath, path);
+            }
+            catch (IOException) when (File.Exists(path))
+            {
+                // Another server instance created the configuration first.
+            }
+            finally
+            {
+                File.Delete(tempPath);
+            }
+        }
+
+        return JsonSerializer.Deserialize<ModConfig>(File.ReadAllText(path), ConfigJson)
+            ?? throw new InvalidDataException("Skeleton Key config.json is empty.");
     }
 
     private void RegisterItem(MongoId id, MongoId template, MongoId parent, string handbookCategory,
@@ -135,13 +165,4 @@ public sealed class SkeletonKeyMod(CustomItemService items, LocationTable locati
             throw new InvalidOperationException($"Skeleton Key could not register {name}: {string.Join(", ", result.Errors ?? [])}");
         }
     }
-}
-
-internal sealed record ModConfig
-{
-    public required int KeyPrice { get; init; }
-    public required int KeycardPrice { get; init; }
-    public required int KeyUses { get; init; }
-    public required int KeycardUses { get; init; }
-    public required Dictionary<string, float> Containers { get; init; }
 }

@@ -1,6 +1,6 @@
 # Skeleton Key for Single Player Tushonka (SPT) 4.1.6
 
-Skeleton Key adds two rare items to jacket loot. Use the **Skeleton Key** on mechanical locks and the **TerraGroup Labs active master keycard** at keycard readers. The keycard uses the Labs master-keycard model supplied by WTT Content Backport.
+Skeleton Key adds two rare items to jacket and boss loot. Use the **Skeleton Key** on mechanical locks and the **TerraGroup Labs active master keycard** at keycard readers. The keycard uses the Labs master-keycard model supplied by WTT Content Backport.
 
 ## Install
 
@@ -13,7 +13,13 @@ The original door key can still be selected through the standard **Unlock** acti
 
 ## Configuration
 
-Edit `SPT_Runtime/user/mods/Boogle-SkeletonKey/config.json` with the server closed. Both items start with 10 uses. Set an item's use count to `0` for unlimited use. `KeyPrice` and `KeycardPrice` set reference prices in roubles. `Containers` maps container template IDs to relative loot weights. A weight of `0` disables the mod's spawn in that container.
+In SPT, press **F12** and open **Skeleton Key → Server Settings**. Edit the settings, select **Save server settings**, then restart SPT. With the server on another machine, edit the file on the server itself and restart it.
+
+The server creates `SPT_Runtime/user/mods/Boogle-SkeletonKey/config.json` on first start. You can edit it directly with the server closed or use F12 to edit the same file. Use **Reload from disk** to pick up manual changes. Both items start with 10 uses. Set uses to `0` for unlimited use. Prices are in roubles.
+
+- **Container loot.** Set an independent `Key` and `Keycard` weight in `SpawnWeights` for each container template ID. F12 has shortcuts for jackets, duffle bags, and safes, plus a custom ID field. New installs use jacket weights of `100` for the key and `50` for the card. Weights compete with the container's other loot and are relative, so the odds vary by location. At `0`, Skeleton Key skips adding that item to the container pool.
+- **Boss loot.** Each eligible boss gets independent rolls at generation, with default chances of `1%` for the key and `0.5%` for the card. A successful roll also requires room in a lootable pocket, rig, or backpack. Set either chance to `0` to disable it. SPT identifies which bots count as bosses.
+- **Upgrading.** An existing `Containers` entry still applies its original weight to both items. The first save from F12 writes those weights separately under `SpawnWeights`. The installer leaves `config.json` in place. See [the example config](SkeletonKey.Server/config.example.json) for all fields.
 
 ## Build
 
@@ -23,7 +29,7 @@ Use the .NET 10 SDK and the .NET Framework 4.7.2 targeting pack on Windows. Buil
 dotnet build SkeletonKey.sln -c Release -p:SptRoot=C:\SPT
 ```
 
-The client DLL belongs in `BepInEx/plugins/Boogle-SkeletonKey/`. The server DLL and `config.json` belong in `SPT_Runtime/user/mods/Boogle-SkeletonKey/`.
+The client DLL belongs in `BepInEx/plugins/Boogle-SkeletonKey/`. The server DLL belongs in `SPT_Runtime/user/mods/Boogle-SkeletonKey/`, where it creates `config.json` if needed.
 
 ## Credits
 

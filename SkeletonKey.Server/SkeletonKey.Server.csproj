@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>none</DebugType>
@@ -13,7 +13,8 @@
     <Reference Include="SPTarkov.DI" HintPath="$(SptRuntime)\SPTarkov.DI.dll" Private="false" />
     <Reference Include="SPTarkov.Common" HintPath="$(SptRuntime)\SPTarkov.Common.dll" Private="false" />
     <Reference Include="SemanticVersioning" HintPath="$(SptRuntime)\SemanticVersioning.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(SptRuntime)\0Harmony.dll" Private="false" />
     <Compile Include="..\Shared\ItemIds.cs" Link="ItemIds.cs" />
-    <None Update="config.json" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="..\Shared\ModConfig.cs" Link="ModConfig.cs" />
   </ItemGroup>
 </Project>

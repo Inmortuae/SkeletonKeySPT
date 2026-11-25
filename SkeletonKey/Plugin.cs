@@ -11,6 +11,7 @@ namespace Boogle
             new KeycardDoorUnlockPatch().Enable();
             new SkeletonKeyActionPatch().Enable();
             new SwitchGetKeyPatch().Enable();
+            new ConfigMenu(Config, BepInEx.Paths.GameRootPath);
             Logger.LogInfo("Skeleton Key interaction patches loaded.");
         }
     }

@@ -1,0 +1,14 @@
+{
+  "KeyPrice": 1500000,
+  "KeycardPrice": 2500000,
+  "KeyUses": 10,
+  "KeycardUses": 10,
+  "BossKeyChance": 1,
+  "BossKeycardChance": 0.5,
+  "SpawnWeights": {
+    "578f8778245977358849a9b5": {
+      "Key": 100,
+      "Keycard": 50
+    }
+  }
+}
