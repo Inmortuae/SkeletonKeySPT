@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DebugType>none</DebugType>
+    <SptRoot Condition="'$(SptRoot)' == ''">C:\SPT</SptRoot>
+    <Managed>$(SptRoot)\EscapeFromTarkov_Data\Managed</Managed>
+    <BepInEx>$(SptRoot)\BepInEx</BepInEx>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" HintPath="$(Managed)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="Comfort" HintPath="$(Managed)\Comfort.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(Managed)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(Managed)\UnityEngine.dll" Private="false" />
+    <Reference Include="ItemComponent.Types" HintPath="$(Managed)\ItemComponent.Types.dll" Private="false" />
+    <Reference Include="ItemTemplate.Types" HintPath="$(Managed)\ItemTemplate.Types.dll" Private="false" />
+    <Reference Include="Sirenix.Serialization" HintPath="$(Managed)\Sirenix.Serialization.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInEx)\core\0Harmony.dll" Private="false" />
+    <Reference Include="BepInEx" HintPath="$(BepInEx)\core\BepInEx.dll" Private="false" />
+    <Reference Include="spt-reflection" HintPath="$(BepInEx)\plugins\spt\spt-reflection.dll" Private="false" />
+    <Compile Include="..\Shared\ItemIds.cs" Link="ItemIds.cs" />
+  </ItemGroup>
+</Project>
