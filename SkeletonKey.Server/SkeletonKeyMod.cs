@@ -29,8 +29,8 @@ public sealed record ModMetadata : IModMetadata
 {
     public string ModGuid { get; init; } = "com.boogle.skeletonkey";
     public string Name { get; init; } = "Skeleton Key";
-    public string Author { get; init; } = "Boogle";
-    public List<string>? Contributors { get; init; } = ["Inmortuae", "JankyTheClown", "RaiRaiTheRaichu"];
+    public string Author { get; init; } = "Inmortuae";
+    public List<string>? Contributors { get; init; } = ["Boogle", "JankyTheClown", "RaiRaiTheRaichu"];
     public Version Version { get; init; } = new(ItemIds.Version);
     public VersionRange SptVersion { get; init; } = new("4.1.6");
     public bool HasPrepatcher { get; init; }
